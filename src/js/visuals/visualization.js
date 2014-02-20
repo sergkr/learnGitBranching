@@ -74,6 +74,12 @@ var Visualization = Backbone.View.extend({
       this.myResize();
     }, this));
 
+    // If the visualization is within a draggable container, we need to update the
+    // position whenever the container is moved.
+    this.$el.parents('.ui-draggable').on('drag', _.bind(function() {
+      this.myResize();
+    }, this));
+
     this.gitVisuals.drawTreeFirstTime();
     if (this.treeString) {
       this.gitEngine.loadTreeFromString(this.treeString);
@@ -182,12 +188,14 @@ var Visualization = Backbone.View.extend({
     $(this.paper.canvas).css('visibility', 'visible');
     setTimeout(_.bind(this.fadeTreeIn, this), 10);
     this.originToo('show', arguments);
+    this.myResize();
   },
 
   showHarsh: function() {
     $(this.paper.canvas).css('visibility', 'visible');
     this.setTreeOpacity(1);
     this.originToo('showHarsh', arguments);
+    this.myResize();
   },
 
   resetFromThisTreeNow: function(treeString) {
@@ -257,8 +265,8 @@ var Visualization = Backbone.View.extend({
     // if we don't have a container, we need to set our
     // position absolutely to whatever we are tracking
     if (!this.containerElement) {
-      var left = el.offsetLeft;
-      var top = el.offsetTop;
+      var left = this.$el.offset().left;
+      var top = this.$el.offset().top;
 
       $(this.paper.canvas).css({
         position: 'absolute',

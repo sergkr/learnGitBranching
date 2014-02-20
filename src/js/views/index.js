@@ -314,6 +314,11 @@ var ModalTerminal = ContainedBase.extend({
     };
 
     this.render();
+
+    this.$el.find('.terminal-window-holder').draggable({
+      cursor: 'move',
+      handle: '.toolbar'
+    });
   },
 
   onClick: function() {
@@ -848,6 +853,11 @@ var CanvasTerminalHolder = BaseView.extend({
 
     this.render();
     this.inDom = true;
+
+    this.$el.find('.terminal-window-holder').draggable({
+      cursor: 'move',
+      handle: '.toolbar'
+    });
 
     if (options.additionalClass) {
       this.$el.addClass(options.additionalClass);
