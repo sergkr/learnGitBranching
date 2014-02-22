@@ -867,9 +867,12 @@ var CanvasTerminalHolder = BaseView.extend({
     this.inDom = true;
 
     this.$terminal = this.$el.find('.terminal-window-holder').first();
+    this.$terminal.height(0.8 * $(window).height());
     this.$terminal.draggable({
       cursor: 'move',
-      handle: '.toolbar'
+      handle: '.toolbar',
+      containment: '#interfaceWrapper',
+      scroll: false
     });
 
     if (options.additionalClass) {
