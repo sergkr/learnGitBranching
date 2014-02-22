@@ -50,6 +50,9 @@ var Level = Sandbox.extend({
 
     this.initGoalData(options);
     this.initName(options);
+    this.on('showGoal', this.showGoal);
+    this.on('minimizeCanvas', this.minimizeGoal);
+    this.on('finishRestoreCanvas', this.finishRestoreGoal);
 
     Level.__super__.initialize.apply(this, [options]);
     this.startOffCommand();
@@ -128,7 +131,8 @@ var Level = Sandbox.extend({
     var name = intl.getName(this.level);
 
     this.levelToolbar = new LevelToolbar({
-      name: name
+      name: name,
+      parent: this
     });
   },
 
@@ -170,7 +174,9 @@ var Level = Sandbox.extend({
     var onlyMaster = TreeCompare.onlyMasterCompared(this.level);
     // first we make the goal visualization holder
     this.goalCanvasHolder = new CanvasTerminalHolder({
-      text: (onlyMaster) ? intl.str('goal-only-master') : undefined
+      text: (onlyMaster) ? intl.str('goal-only-master') : undefined,
+      parent: this,
+      minimizePosition: this.levelToolbar.$goalButton.position()
     });
 
     // then we make a visualization. the "el" here is the element to
@@ -186,6 +192,17 @@ var Level = Sandbox.extend({
       noClick: true
     });
     return this.goalCanvasHolder;
+  },
+
+  minimizeGoal: function (position, size) {
+    this.goalVis.hide();
+    this.goalWindowPos = position;
+    this.goalWindowSize = size;
+    this.levelToolbar.$goalButton.show(this.goalCanvasHolder.getAnimationTime());
+  },
+
+  finishRestoreGoal: function () {
+    this.goalVis.myResize();
   },
 
   showSolution: function(command, deferred) {
@@ -232,6 +249,7 @@ var Level = Sandbox.extend({
 
   showGoal: function(command, defer) {
     this.showSideVis(command, defer, this.goalCanvasHolder, this.initGoalVisualization);
+    this.levelToolbar.$goalButton.hide();
   },
 
   showSideVis: function(command, defer, canvasHolder, initMethod) {
@@ -242,7 +260,7 @@ var Level = Sandbox.extend({
       canvasHolder = initMethod.apply(this);
     }
 
-    canvasHolder.slideIn();
+    canvasHolder.restore(this.goalWindowPos, this.goalWindowSize);
     setTimeout(safeFinish, canvasHolder.getAnimationTime());
   },
 

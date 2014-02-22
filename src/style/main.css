@@ -254,25 +254,6 @@ body.hgMode .visBackgroundColor {
   min-height: 600px;
 }
 
-div.canvasTerminalHolder > div.terminal-window-holder {
-  margin: 100px 0;
-  height: 100%;
-  -webkit-transform: translate3d(0,0,0);
-  -moz-transform: translate3d(0,0,0);
-  -o-transform: translate3d(0,0,0);
-  -ms-transform: translate3d(0,0,0);
-  transform: translate3d(0,0,0);
-}
-
-div.canvasTerminalHolder > div.terminal-window-holder.slideOut {
-  -webkit-transform: translate3d(-150%,0,0);
-  -moz-transform: translate3d(-150%,0,0);
-  -o-transform: translate3d(-150%,0,0);
-  -ms-transform: translate3d(-150%,0,0);
-  transform: translate3d(-150%,0,0);
-}
-
-
 div.canvasTerminalHolder > div.terminal-window-holder > div.wrapper {
   margin: 0 20px 0px 20px;
   height: 80%;
@@ -346,6 +327,47 @@ div.toolbar.level-toolbar {
   background-image: linear-gradient(top, #B2FF2E, #8AD247);
   border-radius: 0;
   height: 50px;
+}
+
+div.toolbar.level-toolbar button {
+  border: 1px solid #888;
+  border-radius: 4px;
+  padding: 4px 12px;
+  background-image: -webkit-linear-gradient(top, #EFEDEE, #C1C1C1);
+}
+
+#show-goal {
+  position: absolute;
+  top: 10px;
+  left: 4px;
+  -webkit-animation-name: redPulse;
+     -moz-animation-name: redPulse;
+      -ms-animation-name: redPulse;
+       -o-animation-name: redPulse;
+          animation-name: redPulse;
+-webkit-animation-duration: 0.5s;
+   -moz-animation-duration: 0.5s;
+    -ms-animation-duration: 0.5s;
+     -o-animation-duration: 0.5s;
+        animation-duration: 0.5s;
+-webkit-animation-iteration-count: 4;
+   -moz-animation-iteration-count: 4;
+    -ms-animation-iteration-count: 4;
+     -o-animation-iteration-count: 4;
+        animation-iteration-count: 4;
+}
+
+@keyframes redPulse {
+  from { -webkit-box-shadow: none; box-shadow: none; }
+  50% { -webkit-box-shadow: 0 0 9px #ff4c7e; box-shadow: 0 0 9px #ff4c7e; }
+  to { -webkit-box-shadow: none; box-shadow: none; }
+}
+
+@-webkit-keyframes redPulse {
+  from { -webkit-box-shadow: none; box-shadow: none; }
+  50% { -webkit-box-shadow: 0 0 9px #ff4c7e; box-shadow: 0 0 9px #ff4c7e; }
+  to { -webkit-box-shadow: none; box-shadow: none;
+  }
 }
 
 span.levelToolbarSpan {

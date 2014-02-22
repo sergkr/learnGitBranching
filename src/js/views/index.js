@@ -563,12 +563,22 @@ var LevelToolbar = BaseView.extend({
 
   initialize: function(options) {
     options = options || {};
+    this.parent = options.parent;
     this.JSON = {
       name: options.name || 'Some level! (unknown name)'
     };
 
     this.beforeDestination = $($('#commandLineHistory div.toolbar')[0]);
     this.render();
+
+
+    this.$goalButton = this.$el.find('#show-goal');
+    this.$goalButton.hide();
+
+    var parent = this.parent;
+    this.$goalButton.on('click', function () {
+      parent.trigger('showGoal');
+    });
 
     if (!options.wait) {
       process.nextTick(_.bind(this.show, this));
@@ -845,6 +855,8 @@ var CanvasTerminalHolder = BaseView.extend({
 
   initialize: function(options) {
     options = options || {};
+    this.parent = options.parent;
+    this.minimizePosition = options.minimizePosition;
     this.destination = $('body');
     this.JSON = {
       title: options.title || intl.str('goal-to-reach'),
@@ -854,7 +866,8 @@ var CanvasTerminalHolder = BaseView.extend({
     this.render();
     this.inDom = true;
 
-    this.$el.find('.terminal-window-holder').draggable({
+    this.$terminal = this.$el.find('.terminal-window-holder').first();
+    this.$terminal.draggable({
       cursor: 'move',
       handle: '.toolbar'
     });
@@ -871,7 +884,7 @@ var CanvasTerminalHolder = BaseView.extend({
   },
 
   die: function() {
-    this.slideOut();
+    this.minimize();
     this.inDom = false;
 
     setTimeout(_.bind(function() {
@@ -879,16 +892,44 @@ var CanvasTerminalHolder = BaseView.extend({
     }, this), this.getAnimationTime());
   },
 
-  slideOut: function() {
-    this.slideToggle(true);
+  minimize: function() {
+    this.parent.trigger('minimizeCanvas', {
+      left: this.$terminal.css('left'),
+      top: this.$terminal.css('top')
+    }, {
+      width: this.$terminal.css('width'),
+      height: this.$terminal.css('height')
+    });
+
+    this.$terminal.animate({
+      top: (this.minimizePosition.top || 0) + 'px',
+      left: (this.minimizePosition.left || 0) + 'px',
+      width: '0px',
+      height: '0px',
+      opacity: 0
+    }, this.getAnimationTime());
   },
 
-  slideIn: function() {
-    this.slideToggle(false);
-  },
+  restore: function (pos, size) {
+    var parent = this.parent;
+    pos = pos || { top: this.$terminal.css('top'), left: this.$terminal.css('left') };
+    size = size || { width: this.$terminal.css('width'), height: this.$terminal.css('height') };
 
-  slideToggle: function(value) {
-    this.$('div.terminal-window-holder').toggleClass('slideOut', value);
+    this.$terminal.css({
+      width: '0px',
+      height: '0px',
+      opacity: '0'
+    });
+
+    this.$terminal.animate({
+      top: pos.top,
+      left: pos.left,
+      width: size.width,
+      height: size.height,
+      opacity: 1
+    }, this.getAnimationTime(), function () {
+        parent.trigger('finishRestoreCanvas');
+    });
   },
 
   getCanvasLocation: function() {
