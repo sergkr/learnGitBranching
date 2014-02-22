@@ -34,7 +34,7 @@ p {
 }
 
 .githubLink {
-  z-index: 99;
+  z-index: 2;
   position: fixed;
   top: 0;
   right: 0;
@@ -228,6 +228,7 @@ div.canvasTerminalHolder {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 3;
 }
 
 #canvasHolder {
@@ -758,6 +759,10 @@ div.modalView.box.inFront.show {
 
 .modalView.inFront {
   z-index: 100;
+}
+
+.terminal-window-holder {
+  z-index: 3;
 }
 
 .terminal-window .inside {
