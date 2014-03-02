@@ -76,7 +76,8 @@ var Visualization = Backbone.View.extend({
 
     // If the visualization is within a draggable container, we need to update the
     // position whenever the container is moved.
-    this.$el.parents('.ui-draggable').on('drag', _.bind(function() {
+    this.$el.parents('.ui-draggable').on('drag', _.bind(function(event, ui) {
+      this.customEvents.trigger('drag', event, ui);
       this.myResize();
     }, this));
 

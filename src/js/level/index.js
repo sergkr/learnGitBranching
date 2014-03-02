@@ -190,6 +190,24 @@ var Level = Sandbox.extend({
       levelBlob: this.level,
       noClick: true
     });
+
+    // If the goal visualization gets dragged to the right side of the screen, then squeeze the main
+    // repo visualization a bit to make room. This way, you could have the goal window hang out on
+    // the right side of the screen and still see the repo visualization.
+    this.goalVis.customEvents.on('drag', _.bind(function(event, ui) {
+      if (ui.position.left > 0.5*$(window).width()) {
+        if (!$('#goalPlaceholder').is(':visible')) {
+          $('#goalPlaceholder').show();
+          this.mainVis.myResize();
+        }
+      } else {
+        if ($('#goalPlaceholder').is(':visible')) {
+          $('#goalPlaceholder').hide();
+          this.mainVis.myResize();
+        }
+      }
+    }, this));
+
     return this.goalCanvasHolder;
   },
 
