@@ -566,13 +566,11 @@ var LevelToolbar = BaseView.extend({
     this.beforeDestination = $($('#commandLineHistory div.toolbar')[0]);
     this.render();
 
-
     this.$goalButton = this.$el.find('#show-goal');
-    this.$goalButton.hide();
 
     var parent = this.parent;
     this.$goalButton.on('click', function () {
-      parent.trigger('showGoal');
+      parent.trigger('toggleGoal');
     });
 
     if (!options.wait) {
@@ -851,7 +849,6 @@ var CanvasTerminalHolder = BaseView.extend({
   initialize: function(options) {
     options = options || {};
     this.parent = options.parent;
-    this.minimizePosition = options.minimizePosition;
     this.destination = $('body');
     this.JSON = {
       title: options.title || intl.str('goal-to-reach'),
@@ -900,9 +897,6 @@ var CanvasTerminalHolder = BaseView.extend({
     });
 
     this.$terminal.animate({
-      top: (this.minimizePosition.top || 0) + 'px',
-      left: (this.minimizePosition.left || 0) + 'px',
-      width: '0px',
       height: '0px',
       opacity: 0
     }, this.getAnimationTime());
@@ -914,15 +908,14 @@ var CanvasTerminalHolder = BaseView.extend({
     size = size || { width: this.$terminal.css('width'), height: this.$terminal.css('height') };
 
     this.$terminal.css({
-      width: '0px',
+      top: pos.top,
+      left: pos.left,
+      width: size.width,
       height: '0px',
       opacity: '0'
     });
 
     this.$terminal.animate({
-      top: pos.top,
-      left: pos.left,
-      width: size.width,
       height: size.height,
       opacity: 1
     }, this.getAnimationTime(), function () {

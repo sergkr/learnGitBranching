@@ -50,7 +50,7 @@ var Level = Sandbox.extend({
 
     this.initGoalData(options);
     this.initName(options);
-    this.on('showGoal', this.showGoal);
+    this.on('toggleGoal', this.toggleGoal);
     this.on('minimizeCanvas', this.minimizeGoal);
     this.on('finishRestoreCanvas', this.finishRestoreGoal);
 
@@ -175,8 +175,7 @@ var Level = Sandbox.extend({
     // first we make the goal visualization holder
     this.goalCanvasHolder = new CanvasTerminalHolder({
       text: (onlyMaster) ? intl.str('goal-only-master') : undefined,
-      parent: this,
-      minimizePosition: this.levelToolbar.$goalButton.position()
+      parent: this
     });
 
     // then we make a visualization. the "el" here is the element to
@@ -198,7 +197,7 @@ var Level = Sandbox.extend({
     this.goalVis.hide();
     this.goalWindowPos = position;
     this.goalWindowSize = size;
-    this.levelToolbar.$goalButton.show(this.goalCanvasHolder.getAnimationTime());
+    this.levelToolbar.$goalButton.text('Show Goal');
   },
 
   finishRestoreGoal: function () {
@@ -247,9 +246,17 @@ var Level = Sandbox.extend({
     });
   },
 
+  toggleGoal: function () {
+    if (this.goalCanvasHolder && this.goalCanvasHolder.inDom) {
+      this.hideGoal();
+    } else {
+      this.showGoal();
+    }
+  },
+
   showGoal: function(command, defer) {
     this.showSideVis(command, defer, this.goalCanvasHolder, this.initGoalVisualization);
-    this.levelToolbar.$goalButton.hide();
+    this.levelToolbar.$goalButton.text('Hide Goal');
   },
 
   showSideVis: function(command, defer, canvasHolder, initMethod) {
@@ -266,6 +273,7 @@ var Level = Sandbox.extend({
 
   hideGoal: function(command, defer) {
     this.hideSideVis(command, defer, this.goalCanvasHolder);
+    this.levelToolbar.$goalButton.text('Show Goal');
   },
 
   hideSideVis: function(command, defer, canvasHolder, vis) {
