@@ -52,7 +52,7 @@ var Level = Sandbox.extend({
     this.initName(options);
     this.on('toggleGoal', this.toggleGoal);
     this.on('minimizeCanvas', this.minimizeGoal);
-    this.on('finishRestoreCanvas', this.finishRestoreGoal);
+    this.on('resizeCanvas', this.resizeGoal);
 
     Level.__super__.initialize.apply(this, [options]);
     this.startOffCommand();
@@ -218,7 +218,7 @@ var Level = Sandbox.extend({
     this.levelToolbar.$goalButton.text('Show Goal');
   },
 
-  finishRestoreGoal: function () {
+  resizeGoal: function () {
     this.goalVis.myResize();
   },
 

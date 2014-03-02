@@ -849,6 +849,7 @@ var CanvasTerminalHolder = BaseView.extend({
   initialize: function(options) {
     options = options || {};
     this.parent = options.parent;
+    this.minHeight = options.minHeight || 200;
     this.destination = $('body');
     this.JSON = {
       title: options.title || intl.str('goal-to-reach'),
@@ -866,6 +867,10 @@ var CanvasTerminalHolder = BaseView.extend({
       containment: '#interfaceWrapper',
       scroll: false
     });
+
+    // If the entire window gets resized such that the terminal is outside the view, then
+    // move it back into the view, and expand/shrink it vertically as necessary.
+    $(window).on('resize', _.debounce(_.bind(this.recalcLayout, this), 300));
 
     if (options.additionalClass) {
       this.$el.addClass(options.additionalClass);
@@ -903,7 +908,7 @@ var CanvasTerminalHolder = BaseView.extend({
   },
 
   restore: function (pos, size) {
-    var parent = this.parent;
+    var self = this;
     pos = pos || { top: this.$terminal.css('top'), left: this.$terminal.css('left') };
     size = size || { width: this.$terminal.css('width'), height: this.$terminal.css('height') };
 
@@ -919,7 +924,46 @@ var CanvasTerminalHolder = BaseView.extend({
       height: size.height,
       opacity: 1
     }, this.getAnimationTime(), function () {
-        parent.trigger('finishRestoreCanvas');
+        self.recalcLayout();
+    });
+  },
+
+  recalcLayout: function () {
+    // Resize/reposition self based on the size of the browser window.
+
+    var parent = this.parent,
+        leftOffset = 0,
+        topOffset = 0,
+        heightOffset = 0,
+        width = this.$terminal.outerWidth(),
+        height = this.$terminal.outerHeight(),
+        left = this.$terminal.offset().left,
+        top = this.$terminal.offset().top,
+        right = ($(window).width() - (left + width)),
+        bottom = ($(window).height() - (top + height)),
+        minHeight = 0.75 * $(window).height(),
+        maxHeight = 0.95 * $(window).height();
+
+    // Calculate offsets
+    if (top < 0) { topOffset = -top; }
+    if (left < 0) { leftOffset = -left; }
+    if (right < 0) { leftOffset = right; }
+    if (bottom < 0) { topOffset = bottom; }
+    if (height < minHeight) { heightOffset = minHeight - height; }
+    if (height > maxHeight) { heightOffset = maxHeight - height; }
+
+    // Establish limits
+    left = Math.max(left + leftOffset, 0);
+    top = Math.max(top + topOffset, 0);
+    height = Math.max(height + heightOffset, minHeight);
+
+    // Set the new position/size
+    this.$terminal.animate({
+      left: left + 'px',
+      top: top + 'px',
+      height: height + 'px'
+    }, this.getAnimationTime(), function () {
+        parent.trigger('resizeCanvas');
     });
   },
 
